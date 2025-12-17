@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gilciane | Terapia TRG</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --cor-primaria: #8fb9a8;
+            --cor-secundaria: #72a1a1;
+            --fundo: #fdfcfb;
+            --texto: #4a4a4a;
+        }
+        body { background-color: var(--fundo); font-family: 'Segoe UI', Roboto, sans-serif; color: var(--texto); }
+        .header-bio { background: white; padding: 80px 0; border-bottom: 1px solid #eee; }
+        .foto-perfil { 
+            max-width: 60%;    /* Impede que a foto saia da tela */
+            height: auto;       /* Mantém a proporção original (NÃO CORTA) */
+            display: block;
+            margin: 0 auto;     /* Centraliza a foto */
+            border-radius: 20px; 
+            border: 8px solid white;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+        .bio-texto { padding-left: 40px; }
+        .bio-texto h1 { color: var(--cor-secundaria); font-weight: 700; margin-bottom: 10px; }
+        .bio-texto .tagline { color: var(--cor-primaria); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; display: block; }
+        .texto-principal { font-size: 1.1rem; line-height: 1.8; text-align: justify; }
+        .sessao-agendamento { padding: 60px 0; background: #f8fcfb; }
+        .titulo-agendar { font-weight: 700; color: var(--cor-secundaria); margin-bottom: 40px; }
+        .card-horario { background: white; border: 1px solid #eef2f1; border-radius: 15px; padding: 20px; transition: all 0.3s ease; }
+        .card-horario:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(143, 185, 168, 0.2); }
+        .hora-texto { font-size: 1.3rem; font-weight: 700; color: var(--cor-secundaria); }
+        .btn-agendar { background-color: var(--cor-primaria); color: white; border-radius: 10px; border: none; padding: 10px; width: 100%; font-weight: 600; margin-top: 10px; }
+        .footer { padding: 40px 0; text-align: center; color: #999; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+<header class="header-bio">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-5 text-center">
+                <img src="{{ url_for('static', filename='foto-gilciane.jpeg') }}" alt="Gilciane" class="foto-perfil">
+            </div>
+            <div class="col-md-7 bio-texto">
+                <span class="tagline">Terapia de Reprocessamento Generativo</span>
+                <h1>Gilciane</h1>
+                <div class="texto-principal">
+                    <p>Olá, muito prazer! Se você chegou até aqui, talvez esteja carregando um peso no peito que as palavras ainda não conseguiram explicar. Eu quero que você saiba: <strong>há esperança e há um caminho para o alívio.</strong></p>
+                    <p>Meu trabalho serve para quem deseja se libertar de cicatrizes do passado, ansiedade e bloqueios que impedem você de ser quem Deus te planejou para ser. Sou Cristã e acredito que a nossa saúde emocional é fundamental para vivermos a plenitude que nos foi prometida.</p>
+                    <p>Unindo a técnica precisa da TRG com um olhar humano e ético, meu objetivo é ser um instrumento para que você recupere o sorriso, a leveza e a sua identidade.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="sessao-agendamento">
+    <div class="container text-center">
+        <h2 class="titulo-agendar">Escolha um horário para sua sessão</h2>
+        <div class="row g-4 justify-content-center">
+            {% for hora in horarios %}
+            <div class="col-6 col-sm-4 col-md-2">
+                <div class="card card-horario">
+                    <div class="hora-texto">{{ hora }}</div>
+                    <button class="btn-agendar" onclick="abrirModal('{{ hora }}')">Agendar</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</main>
+
+<footer class="footer">
+    <p>&copy; 2024 Gilciane - Terapia com Ética e Humanidade</p>
+</footer>
+
+<div class="modal fade" id="modalAgendamento" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <form action="/confirmar" method="POST">
+        <div class="modal-header border-0">
+          <h5 class="modal-title">Agendar para às <span id="displayHora"></span></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="hora" id="inputHora">
+          <div class="mb-3">
+            <label class="form-label">Seu Nome Completo</label>
+            <input type="text" name="nome" class="form-control form-control-lg" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Seu WhatsApp</label>
+            <input type="tel" name="whatsapp" class="form-control form-control-lg" required placeholder="(00) 00000-0000">
+          </div>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="submit" class="btn btn-success btn-lg w-100">Confirmar e Enviar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function abrirModal(hora) {
+        document.getElementById('displayHora').innerText = hora;
+        document.getElementById('inputHora').value = hora;
+        new bootstrap.Modal(document.getElementById('modalAgendamento')).show();
+    }
+</script>
+</body>
+</html>
